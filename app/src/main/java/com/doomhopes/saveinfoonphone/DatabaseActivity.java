@@ -55,9 +55,6 @@ public class DatabaseActivity extends AppCompatActivity {
         Inserter inserter = new Inserter(str);
         (new Thread(inserter)).start();
 
-        //select
-        (new Thread(showDB)).start();
-
         editText.setText(" ");
     }
 
@@ -145,6 +142,8 @@ public class DatabaseActivity extends AppCompatActivity {
             }
             logText = "Insert OK";
             runOnUiThread(showLog);
+            //select
+            (new Thread(showDB)).start();
         }
     }
 }
