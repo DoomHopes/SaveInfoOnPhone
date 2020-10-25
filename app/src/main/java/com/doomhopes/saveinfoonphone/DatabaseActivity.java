@@ -2,6 +2,7 @@ package com.doomhopes.saveinfoonphone;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import java.sql.SQLData;
 public class DatabaseActivity extends AppCompatActivity {
 
     TextView textViewLog;
+    TextView textViewRes;
     EditText editText;
     private SQLiteDatabase database; // ресурс базы данных
 
@@ -25,6 +27,7 @@ public class DatabaseActivity extends AppCompatActivity {
 
         textViewLog = findViewById(R.id.db_log_txt);
         editText = findViewById(R.id.editTextNewSTR);
+        textViewRes = findViewById(R.id.textViewRes);
 
         database = openOrCreateDatabase("storage.db", MODE_PRIVATE,null);
         String query = "CREATE TABLE IF NOT EXISTS Strings ("+
@@ -51,6 +54,8 @@ public class DatabaseActivity extends AppCompatActivity {
             return;
         }
 
+        //Insert
+
         String query = "INSERT INTO Strings(str) VALUES('"+ str +"')";
 
         try{
@@ -62,6 +67,30 @@ public class DatabaseActivity extends AppCompatActivity {
         }
         textViewLog.setText("Insert OK!");
         editText.setText(" ");
+
+        // Select
+
+        String txt = "";
+        query = "SELECT * FROM Strings";
+        Cursor res = null;
+
+        try{
+            res = database.rawQuery(query,null);
+        }catch (SQLException ex)
+        {
+            textViewLog.setText(ex.getMessage());
+            return;
+        }
+        boolean hasNext = res.moveToFirst();
+        while(hasNext)
+        {
+            txt+= res.getInt(res.getColumnIndex("id")) + " " +
+                res.getString(res.getColumnIndex("str")) + "\n";
+            hasNext = res.moveToNext();
+        }
+        textViewRes.setText(txt);
+        textViewLog.setText("Select OK");
+
     }
 }
 
