@@ -8,4 +8,5 @@
     <string name="ADD_Button">ADD</string>
     <string name="select_button">Select</string>
     <string name="file_txt">File</string>
+    <string name="enter_btn">Enter</string>
 </resources>
