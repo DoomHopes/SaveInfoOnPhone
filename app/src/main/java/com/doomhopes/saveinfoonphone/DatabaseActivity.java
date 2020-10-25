@@ -46,9 +46,28 @@ public class DatabaseActivity extends AppCompatActivity {
         String str = String.valueOf(editText.getText());
         if(str.contentEquals(""))
         {
-            textViewLog.setText("Please, Enter text");
-           // Toast.makeText(this,"Enter text",Toast.LENGTH_SHORT).show();
+            //textViewLog.setText("Please, Enter text");
+            Toast.makeText(this,"Enter text",Toast.LENGTH_SHORT).show();
             return;
         }
+
+        String query = "INSERT INTO Strings(str) VALUES('"+ str +"')";
+
+        try{
+            database.execSQL(query);
+        }catch (SQLException ex)
+        {
+            textViewLog.setText(ex.getMessage());
+            return;
+        }
+        textViewLog.setText("Insert OK!");
+        editText.setText(" ");
     }
 }
+
+
+
+
+
+
+
