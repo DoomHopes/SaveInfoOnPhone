@@ -6,4 +6,5 @@
     <string name="activity_db_title">Database</string>
     <string name="Ok_Button">Ok</string>
     <string name="ADD_Button">ADD</string>
+    <string name="select_button">Select</string>
 </resources>

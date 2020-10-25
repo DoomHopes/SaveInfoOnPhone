@@ -68,7 +68,13 @@ public class DatabaseActivity extends AppCompatActivity {
         textViewLog.setText("Insert OK!");
         editText.setText(" ");
 
+    }
+
+    public void OnClickSelect(View view) {
+
         // Select
+
+        String query = null;
 
         String txt = "";
         query = "SELECT * FROM Strings";
@@ -85,12 +91,11 @@ public class DatabaseActivity extends AppCompatActivity {
         while(hasNext)
         {
             txt+= res.getInt(res.getColumnIndex("id")) + " " +
-                res.getString(res.getColumnIndex("str")) + "\n";
+                    res.getString(res.getColumnIndex("str")) + "\n";
             hasNext = res.moveToNext();
         }
         textViewRes.setText(txt);
         textViewLog.setText("Select OK");
-
     }
 }
 
