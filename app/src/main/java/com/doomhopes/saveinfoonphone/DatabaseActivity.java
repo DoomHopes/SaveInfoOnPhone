@@ -20,6 +20,8 @@ public class DatabaseActivity extends AppCompatActivity {
     EditText editText;
     private SQLiteDatabase database; // ресурс базы данных
 
+    private Runnable showDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +31,7 @@ public class DatabaseActivity extends AppCompatActivity {
         editText = findViewById(R.id.editTextNewSTR);
         textViewRes = findViewById(R.id.textViewRes);
 
-        database = openOrCreateDatabase("storage.db", MODE_PRIVATE,null);
+        if(database == null) database = openOrCreateDatabase("storage.db", MODE_PRIVATE,null);
         String query = "CREATE TABLE IF NOT EXISTS Strings ("+
                 "id INTEGER PRIMARY KEY," +
                 "str VARCHAR(256)," +
@@ -70,32 +72,33 @@ public class DatabaseActivity extends AppCompatActivity {
 
     }
 
-    public void OnClickSelect(View view) {
+    //в отдельном потоке палучаетса
+    public DatabaseActivity() {
+        super();
+        showDB = () ->{
+            if(database == null) database = openOrCreateDatabase("storage.db", MODE_PRIVATE,null);
 
-        // Select
+            String txt = "";
+            String query = "SELECT * FROM Strings";
+            Cursor res = null;
 
-        String query = null;
-
-        String txt = "";
-        query = "SELECT * FROM Strings";
-        Cursor res = null;
-
-        try{
-            res = database.rawQuery(query,null);
-        }catch (SQLException ex)
-        {
-            textViewLog.setText(ex.getMessage());
-            return;
-        }
-        boolean hasNext = res.moveToFirst();
-        while(hasNext)
-        {
-            txt+= res.getInt(res.getColumnIndex("id")) + " " +
-                    res.getString(res.getColumnIndex("str")) + "\n";
-            hasNext = res.moveToNext();
-        }
-        textViewRes.setText(txt);
-        textViewLog.setText("Select OK");
+            try{
+                res = database.rawQuery(query,null);
+            }catch (SQLException ex)
+            {
+                textViewLog.setText(ex.getMessage());
+                return;
+            }
+            boolean hasNext = res.moveToFirst();
+            while(hasNext)
+            {
+                txt+= res.getInt(res.getColumnIndex("id")) + " " +
+                        res.getString(res.getColumnIndex("str")) + "\n";
+                hasNext = res.moveToNext();
+            }
+            textViewRes.setText(txt);
+            textViewLog.setText("Select OK");
+        };
     }
 }
 
