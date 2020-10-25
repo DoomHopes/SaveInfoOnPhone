@@ -127,7 +127,7 @@ public class DatabaseActivity extends AppCompatActivity {
         }
 
         @Override
-        public void run() {
+        public void run()  {
             String query = "INSERT INTO Strings(str) VALUES('"+ value +"')";
 
             try{
