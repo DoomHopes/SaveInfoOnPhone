@@ -5,4 +5,5 @@
     <string name="button_file">Save file</string>
     <string name="activity_db_title">Database</string>
     <string name="Ok_Button">Ok</string>
+    <string name="ADD_Button">ADD</string>
 </resources>
