@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OnClickBtnFile(View view) {
-
+        Intent intent = new Intent(MainActivity.this, FileActivity.class);
+        startActivity(intent);
     }
 }

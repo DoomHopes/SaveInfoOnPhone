@@ -7,4 +7,5 @@
     <string name="Ok_Button">Ok</string>
     <string name="ADD_Button">ADD</string>
     <string name="select_button">Select</string>
+    <string name="file_txt">File</string>
 </resources>
