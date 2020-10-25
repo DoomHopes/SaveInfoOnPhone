@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -21,6 +22,10 @@ public class DatabaseActivity extends AppCompatActivity {
     private SQLiteDatabase database; // ресурс базы данных
 
     private Runnable showDB;
+    private Runnable showLog;
+    private Runnable showRes;
+    private String logText;
+    private String resText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,7 @@ public class DatabaseActivity extends AppCompatActivity {
         textViewLog = findViewById(R.id.db_log_txt);
         editText = findViewById(R.id.editTextNewSTR);
         textViewRes = findViewById(R.id.textViewRes);
+        textViewRes.setMovementMethod(new ScrollingMovementMethod());
 
         if(database == null) database = openOrCreateDatabase("storage.db", MODE_PRIVATE,null);
         String query = "CREATE TABLE IF NOT EXISTS Strings ("+
@@ -64,12 +70,17 @@ public class DatabaseActivity extends AppCompatActivity {
             database.execSQL(query);
         }catch (SQLException ex)
         {
-            textViewLog.setText(ex.getMessage());
+           // textViewLog.setText(ex.getMessage());
+            logText = ex.getMessage();
+            runOnUiThread(showLog);
             return;
         }
         textViewLog.setText("Insert OK!");
         editText.setText(" ");
 
+        //Select
+
+        (new Thread(showDB)).start();
     }
 
     //в отдельном потоке палучаетса
@@ -96,8 +107,20 @@ public class DatabaseActivity extends AppCompatActivity {
                         res.getString(res.getColumnIndex("str")) + "\n";
                 hasNext = res.moveToNext();
             }
-            textViewRes.setText(txt);
-            textViewLog.setText("Select OK");
+            //textViewRes.setText(txt);
+            //textViewLog.setText("Select OK");
+            resText = txt;
+            logText = "Select OK";
+            runOnUiThread(showLog);
+            runOnUiThread(showRes);
+        };
+
+        showLog = ()->{
+            textViewLog.setText(logText);
+        };
+
+        showRes = () ->{
+            textViewRes.setText(resText);
         };
     }
 }
