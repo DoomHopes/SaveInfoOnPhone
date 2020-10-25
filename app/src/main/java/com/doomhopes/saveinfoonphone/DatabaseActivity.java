@@ -24,6 +24,8 @@ public class DatabaseActivity extends AppCompatActivity {
     private Runnable showDB;
     private Runnable showLog;
     private Runnable showRes;
+    private Runnable installDB;
+    private Runnable insertDB;
     private String logText;
     private String resText;
 
@@ -37,20 +39,7 @@ public class DatabaseActivity extends AppCompatActivity {
         textViewRes = findViewById(R.id.textViewRes);
         textViewRes.setMovementMethod(new ScrollingMovementMethod());
 
-        if(database == null) database = openOrCreateDatabase("storage.db", MODE_PRIVATE,null);
-        String query = "CREATE TABLE IF NOT EXISTS Strings ("+
-                "id INTEGER PRIMARY KEY," +
-                "str VARCHAR(256)," +
-                "moment DATETIME DEFAULT CURRENT_TIMESTAMP)";
-
-        try{
-            database.execSQL(query);
-        }catch (SQLException ex)
-        {
-            textViewLog.setText(ex.getMessage());
-            return;
-        }
-        textViewLog.setText("OK!");
+        (new Thread(installDB)).start();
     }
 
     public void OnClickAddStr(View view) {
@@ -63,27 +52,15 @@ public class DatabaseActivity extends AppCompatActivity {
         }
 
         //Insert
+        Inserter inserter = new Inserter(str);
+        (new Thread(inserter)).start();
 
-        String query = "INSERT INTO Strings(str) VALUES('"+ str +"')";
-
-        try{
-            database.execSQL(query);
-        }catch (SQLException ex)
-        {
-           // textViewLog.setText(ex.getMessage());
-            logText = ex.getMessage();
-            runOnUiThread(showLog);
-            return;
-        }
-        textViewLog.setText("Insert OK!");
-        editText.setText(" ");
-
-        //Select
-
+        //select
         (new Thread(showDB)).start();
+
+        editText.setText(" ");
     }
 
-    //в отдельном потоке палучаетса
     public DatabaseActivity() {
         super();
         showDB = () ->{
@@ -122,6 +99,53 @@ public class DatabaseActivity extends AppCompatActivity {
         showRes = () ->{
             textViewRes.setText(resText);
         };
+
+        installDB = () ->{
+            if(database == null) database = openOrCreateDatabase("storage.db", MODE_PRIVATE,null);
+            String query = "CREATE TABLE IF NOT EXISTS Strings ("+
+                    "id INTEGER PRIMARY KEY," +
+                    "str VARCHAR(256)," +
+                    "moment DATETIME DEFAULT CURRENT_TIMESTAMP)";
+
+            try{
+                database.execSQL(query);
+            }catch (SQLException ex)
+            {
+                textViewLog.setText(ex.getMessage());
+                return;
+            }
+            (new Thread(showDB)).start();
+        };
+    }
+
+    class Inserter implements Runnable{
+        private String value;
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public Inserter(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public void run() {
+            String query = "INSERT INTO Strings(str) VALUES('"+ value +"')";
+
+            try{
+                if(database == null) database = openOrCreateDatabase("storage.db", MODE_PRIVATE,null);
+                database.execSQL(query);
+            }catch (SQLException ex)
+            {
+                // textViewLog.setText(ex.getMessage());
+                logText = ex.getMessage();
+                runOnUiThread(showLog);
+                return;
+            }
+            logText = "Insert OK";
+            runOnUiThread(showLog);
+        }
     }
 }
 
