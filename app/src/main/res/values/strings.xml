@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SaveInfoOnPhone</string>
+    <string name="app_title">Save Data</string>
+    <string name="button_db">Save db</string>
+    <string name="button_file">Save file</string>
+    <string name="activity_db_title">Database</string>
+    <string name="Ok_Button">Ok</string>
+</resources>
